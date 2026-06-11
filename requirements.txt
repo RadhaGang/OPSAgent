@@ -8,7 +8,7 @@ langchain-huggingface==0.2.0
 
 sentence-transformers==4.1.0
 transformers==4.52.4
-torch==2.7.0
+torch==2.12.0
 
 faiss-cpu==1.11.0
 
