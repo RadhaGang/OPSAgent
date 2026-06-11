@@ -1,2 +1,5 @@
+faiss_index/
 OpsAgentEnv/
 __pycache__/
+*.pyc
+.env

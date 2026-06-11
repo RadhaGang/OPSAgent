@@ -11,10 +11,8 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from transformers import pipeline
 
-# ✅ Relative paths — works on any machine including Render
-BASE_DIR = Path(__file__).parent
-DATA_PATH = BASE_DIR / "knowledge_base"
-INDEX_PATH = BASE_DIR / "faiss_index"
+DATA_PATH = r"C:\Users\Radha\Desktop\GenAI\OPSAgent\knowledge_base"
+INDEX_PATH = r"C:\Users\Radha\Desktop\GenAI\OPSAgent\faiss_index"
 
 
 # =========================
@@ -26,10 +24,10 @@ def get_vectorstore():
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
-    if INDEX_PATH.exists():
+    if Path(INDEX_PATH).exists():
 
         vectorstore = FAISS.load_local(
-            str(INDEX_PATH),
+            INDEX_PATH,
             embeddings,
             allow_dangerous_deserialization=True
         )
@@ -38,12 +36,6 @@ def get_vectorstore():
 
     docs = []
     folder = Path(DATA_PATH)
-
-    if not folder.exists():
-        raise FileNotFoundError(
-            f"knowledge_base folder not found at {folder}. "
-            "Please add your documents to the knowledge_base/ directory."
-        )
 
     for file in folder.rglob("*"):
 
@@ -63,15 +55,12 @@ def get_vectorstore():
             loaded_docs = loader.load()
 
             for doc in loaded_docs:
-                doc.metadata["source"] = file.name
+                doc.metadata["source"] = str(file)
 
             docs.extend(loaded_docs)
 
         except Exception as e:
             print(f"Error loading {file}: {e}")
-
-    if not docs:
-        raise ValueError("No documents found in knowledge_base/. Add .pdf, .txt, or .docx files.")
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
@@ -81,7 +70,7 @@ def get_vectorstore():
     chunks = splitter.split_documents(docs)
 
     vectorstore = FAISS.from_documents(chunks, embeddings)
-    vectorstore.save_local(str(INDEX_PATH))
+    vectorstore.save_local(INDEX_PATH)
 
     return vectorstore
 

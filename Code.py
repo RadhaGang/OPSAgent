@@ -1,5 +1,6 @@
 import streamlit as st
 from pathlib import Path
+from fastapi import FastAPI
 
 from langchain_community.document_loaders import (
     PyPDFLoader,
@@ -13,7 +14,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 from transformers import pipeline
-
+app = FastAPI()
 
 # ==================================================
 # CONFIG
